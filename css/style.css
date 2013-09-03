@@ -1,0 +1,8 @@
+body {	
+}
+
+#myDiv {
+	background-color: yellow;
+	border: black solid 3px;
+	color: "gray";
+}
