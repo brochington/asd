@@ -58,6 +58,7 @@
 	};
 
 	ns.inputElement = function(data){
+		console.log("new inputElement");
 		var self = this;
 		var obj = {
 
@@ -66,7 +67,7 @@
 	};
 
 	ns.varBindObj = function(data){
-
+		console.log("new varBindObj");
 		var self = this,
 			obj = { _val : {} };
 

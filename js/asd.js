@@ -22,6 +22,7 @@
     };
 
     asd.createElementObjects = function(mainObj, bodyDOM){
+        console.log("createElementObjects");
         var bodyDOMLength = bodyDOM.length;
         for(var i = 0; i < bodyDOMLength; i++){
             if(bodyDOM[i].nodeName !== "SCRIPT"){
@@ -29,7 +30,7 @@
                 var stdElement = new classes.stdElement(bodyDOM[i]);
                 if(stdElement !== undefined){
                     Object.defineProperty(mainObj, stdElement.id, {value: stdElement});    
-                    asd.setupCSS(stdElement);
+                    asd.setupCSS(stdElement, mainObj);
                     asd.setupMutationObserver(stdElement);
                     if(bodyDOM[i].nodeName === "INPUT"){
                         asd.setupInputLister(mainObj, stdElement);
@@ -43,7 +44,7 @@
 
     /*****************Setup Functions*********************/
 
-    asd.setupCSS = function(obj){
+    asd.setupCSS = function(obj, mainObj){
         if(obj.id){
             var el = document.getElementById(obj.origin.id);
             var st = window.getComputedStyle(el, null);
@@ -60,16 +61,24 @@
                     // TODO: find out a way to not have the val method.
                     Object.defineProperty(obj[key], 'val', {
                         get: function(){
-                            // asdp.publish(this);
+                            // console.log("getter of css");
                             return this._val;},
                         set: function(value){
+                            console.log("css set");
+                            console.log(value);
+
+                            if(value.asdVarBindObj){
+                                console.log("has asdVarBindObj.");
+                                console.log(obj);
+                                console.log(value.propName);
+                                console.log(this);
+                                asdp.subscribeCSS(value, obj, this, asdp.updateCSSSubscriber );
+                            }
                             if(typeof value == "string"){
+                                // console.log("string");
                                 document.getElementById(this.id).style[this.name] = value;
                                 this._val = value;
-                            } else if(typeof value == 'object'){
-                                this._val = value;
-                            }
-                                
+                            } 
                         }
                     });
 
@@ -113,8 +122,13 @@
 
     /*****************Listener Functions*********************/
 
-    asd.stdListener1 = function(e){
-        console.log(e);
+    asd.stdListener1 = function(event){
+
+        switch(event.type){
+            case 'keydown':
+            console.log("keydown");
+            console.log(event.target);
+        }
     };
 
     asd.keyupListener1 = function(e){

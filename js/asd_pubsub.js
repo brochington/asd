@@ -2,23 +2,94 @@
 	var ns = {},
 		asd = window.asd,
 		asdf = window.asdFunctions, 
-		topics = {};
+		topics = {},
+		uid = 0;
 
-	ns.publish = function(pubObject, callback){
-		console.log("published");
-		console.log(pubObject);
+	ns.topics = function(){
+		return topics;
+	}
 
+	ns.addToTopics = function(pubObject, callback){
+		// console.log("addToTopics");
+		var metaID = pubObject.asdMetaID.toString();
+		topics[metaID] = [];
+
+		if(callback) { callback() };
 
 	}
 
-	ns.subscribe = function(topic, func){
-		console.log("subscribe");
+	ns.publish = function(asdMetaID, asdMetaVal, destObj, newValue){
+		console.log("at publish");
 
-		if(!topics.hasOwnProperty(topic)){
-			topics[topic] = [];
+		// console.log(asdMetaID);
+		// console.log(asdMetaVal);
+		// console.log(destObj);
+		// console.log(newValue);
+
+		var metaID = asdMetaID,
+			subscribers = topics[metaID],
+			subscribersLength = subscribers.length;
+
+
+		if(!topics.hasOwnProperty(metaID)){
+			console.log("doesn't have metaID");
+			return false;
 		}
 
-		
+		for(var i = 0; i < subscribersLength; i++){
+			var val = subscribers[i];
+			// console.log(subscribers[i]);
+			subscribers[i].func(destObj, val, newValue);	
+			// console.log("through");
+		}
+	}
+
+	ns.subscribe = function(pubObject, val, func){
+		console.log("subscribe");
+		// console.log(func);
+		// console.log(val);
+		var metaID = pubObject.asdMetaID;
+
+		if(!topics.hasOwnProperty(metaID)){
+			topics[metaID] = [];
+		}
+		var token = (++uid).toString();
+		topics[metaID].push({ token : token, val : val, func : func, obj : pubObject });
+
+		return token;
+	}
+
+	ns.subscribeCSS = function(pubObject, elementObj, val, func){
+			console.log("subscribeCSS");
+
+		var metaID = pubObject.asdMetaID;
+
+		if(!topics.hasOwnProperty(metaID)){
+			topics[metaID] = [];
+		}
+		var token = (++uid).toString();
+		topics[metaID].push({ token : token, val : val, func : func, obj : pubObject, elementObj : elementObj });
+
+		return token;
+	}
+
+	ns.unsubscribe = function(){
+		console.log("unsubscribe");
+	}
+	ns.updateSubscribersByMetaID = function(destObj, val, newValue){
+
+		destObj[val.val.name] = newValue;
+	}
+
+	ns.updateCSSSubscriber = function(destObj, val, newValue){
+		console.log("updateCSSSubscriber");
+
+		console.log(destObj);
+		console.log(val);
+		console.log(newValue);
+
+		val.elementObj[val.val.name].val = newValue;
+
 	}
 
 	window.asdPubSub = ns;

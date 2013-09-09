@@ -5,6 +5,7 @@ var asd = window.asd;
 var asd_class = window.asdClasses;
 window.app = asd.init();
 window.a = new asd_class.varBindObj;
+// what does asdf stand for again?
 
 
 
